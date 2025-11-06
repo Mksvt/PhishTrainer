@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Shield } from "lucide-react"
+import { useRegisterMutation } from "@/lib/api/apiSlice"
 
 export default function SignupPage() {
   const [name, setName] = useState("")
@@ -16,8 +17,9 @@ export default function SignupPage() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
   const router = useRouter()
+
+  const [register, { isLoading }] = useRegisterMutation()
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,50 +35,17 @@ export default function SignupPage() {
       return
     }
 
-    setLoading(true)
-
     try {
-      const users = JSON.parse(localStorage.getItem("users") || "{}")
-
-      if (users[email]) {
-        setError("Цей електронний лист уже зареєстрований")
-        setLoading(false)
-        return
-      }
-
-      const newUser = {
-        id: Date.now().toString(),
-        email,
-        name,
-        password,
-        rating: 0,
-        totalEmails: 0,
-        correctIdentified: 0,
-        incorrectIdentified: 0,
-        scamsClicked: 0,
-        createdAt: new Date(),
-      }
-
-      users[email] = newUser
-      localStorage.setItem("users", JSON.stringify(users))
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          id: newUser.id,
-          email: newUser.email,
-          name: newUser.name,
-        }),
-      )
-
-      document.cookie = `user=${email}; path=/`
-
+      const response = await register({ email, name, password }).unwrap()
+      
+      console.log('Успішна реєстрація:', response.user)
+      
       setTimeout(() => {
         router.push("/dashboard")
       }, 100)
-    } catch (err) {
-      setError("Помилка при реєстрації. Спробуйте пізніше.")
-      setLoading(false)
+    } catch (err: any) {
+      console.error('Помилка реєстрації:', err)
+      setError(err.data?.error || 'Помилка при реєстрації. Спробуйте пізніше.')
     }
   }
 
@@ -154,8 +123,8 @@ export default function SignupPage() {
               />
             </div>
 
-            <Button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 h-11">
-              {loading ? "Реєстрація..." : "Зареєструватися"}
+            <Button type="submit" disabled={isLoading} className="w-full bg-primary hover:bg-primary/90 h-11">
+              {isLoading ? "Реєстрація..." : "Зареєструватися"}
             </Button>
           </form>
 

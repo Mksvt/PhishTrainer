@@ -1,56 +1,41 @@
-"use client"
+'use client';
 
-import type React from "react"
+import type React from 'react';
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Shield } from "lucide-react"
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Shield } from 'lucide-react';
+import { useLoginMutation } from '@/lib/api/apiSlice';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const [login, { isLoading }] = useLoginMutation();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setLoading(true)
+    e.preventDefault();
+    setError('');
 
     try {
-      const users = JSON.parse(localStorage.getItem("users") || "{}")
-      const user = users[email]
+      const response = await login({ email, password }).unwrap();
 
-      if (!user || user.password !== password) {
-        setError("Невірна електронна адреса або пароль")
-        setLoading(false)
-        return
-      }
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          id: user.id,
-          email: user.email,
-          name: user.name,
-        }),
-      )
-
-      document.cookie = `user=${email}; path=/`
+      console.log('Успішний вхід:', response.user);
 
       setTimeout(() => {
-        router.push("/dashboard")
-      }, 100)
-    } catch (err) {
-      setError("Помилка входу. Спробуйте пізніше.")
-      setLoading(false)
+        router.push('/dashboard');
+      }, 100);
+    } catch (err: any) {
+      console.error('Помилка входу:', err);
+      setError(err.data?.error || 'Невірна електронна адреса або пароль');
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-card to-background px-4">
@@ -69,7 +54,9 @@ export default function LoginPage() {
 
         <Card className="p-8 backdrop-blur-sm bg-card/50 border-border/50">
           <h2 className="text-2xl font-bold mb-2 text-foreground">Вхід</h2>
-          <p className="text-muted-foreground mb-6">Введіть вашу електронну адресу та пароль</p>
+          <p className="text-muted-foreground mb-6">
+            Введіть вашу електронну адресу та пароль
+          </p>
 
           <form onSubmit={handleLogin} className="space-y-4">
             {error && (
@@ -79,7 +66,9 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-foreground">Електронна адреса</label>
+              <label className="block text-sm font-medium mb-2 text-foreground">
+                Електронна адреса
+              </label>
               <Input
                 type="email"
                 value={email}
@@ -91,7 +80,9 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-foreground">Пароль</label>
+              <label className="block text-sm font-medium mb-2 text-foreground">
+                Пароль
+              </label>
               <Input
                 type="password"
                 value={password}
@@ -102,14 +93,21 @@ export default function LoginPage() {
               />
             </div>
 
-            <Button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 h-11">
-              {loading ? "Вхід..." : "Увійти"}
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-primary hover:bg-primary/90 h-11"
+            >
+              {isLoading ? 'Вхід...' : 'Увійти'}
             </Button>
           </form>
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            Немає акаунту?{" "}
-            <Link href="/signup" className="text-primary hover:underline font-medium">
+            Немає акаунту?{' '}
+            <Link
+              href="/signup"
+              className="text-primary hover:underline font-medium"
+            >
               Зареєструйтеся
             </Link>
           </div>
@@ -120,5 +118,5 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
-  )
+  );
 }
