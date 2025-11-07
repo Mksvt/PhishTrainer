@@ -9,6 +9,7 @@ import type {
     AuthResponse,
     LoginRequest,
     RegisterRequest,
+    WeeklyProgressData,
 } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
@@ -174,6 +175,19 @@ export const apiSlice = createApi({
             },
             providesTags: ["History"],
         }),
+
+        getWeeklyProgress: builder.query<
+            { weeklyProgress: WeeklyProgressData[] },
+            { weeks?: number } | void
+        >({
+            query: (params) => {
+                const queryParams = params?.weeks
+                    ? `?weeks=${params.weeks}`
+                    : "";
+                return `/simulation/weekly-progress${queryParams}`;
+            },
+            providesTags: ["Stats"],
+        }),
     }),
 });
 
@@ -189,4 +203,5 @@ export const {
     useCheckAnswerMutation,
     useGetUserStatsQuery,
     useGetUserAnswerHistoryQuery,
+    useGetWeeklyProgressQuery,
 } = apiSlice;

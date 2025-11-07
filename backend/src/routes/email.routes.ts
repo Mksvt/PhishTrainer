@@ -1,16 +1,24 @@
-import { Router } from 'express';
+import { Router } from "express";
 import {
-  getAllEmails,
-  getRandomEmail,
-  getEmailById,
-} from '../controllers/email.controller';
-import { authMiddleware } from '../middleware/auth.middleware';
+    getAllEmails,
+    getRandomEmail,
+    getEmailById,
+    getEmailByCategory,
+    getEmailDetails,
+    getEmailHistory,
+    clearEmailHistory,
+} from "../controllers/email.controller";
+import { authMiddleware } from "../middleware/auth.middleware";
 
 const router = Router();
 
 // Всі маршрути захищені
-router.get('/', authMiddleware, getAllEmails);
-router.get('/random', authMiddleware, getRandomEmail);
-router.get('/:id', authMiddleware, getEmailById);
+router.get("/", authMiddleware, getAllEmails);
+router.get("/random", authMiddleware, getRandomEmail);
+router.get("/category/:category", authMiddleware, getEmailByCategory);
+router.get("/history", authMiddleware, getEmailHistory);
+router.delete("/history", authMiddleware, clearEmailHistory);
+router.get("/details/:id", authMiddleware, getEmailDetails);
+router.get("/:id", authMiddleware, getEmailById);
 
 export default router;

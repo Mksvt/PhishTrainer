@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,46 +8,43 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String       @id @default(uuid())
+  email     String       @unique
   name      String
   password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  stats     UserStats?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
   answers   UserAnswer[]
+  stats     UserStats?
 
   @@map("users")
 }
 
 model UserStats {
-  id                   String   @id @default(uuid())
-  userId               String   @unique
-  rating               Int      @default(0)
-  totalEmails          Int      @default(0)
-  correctIdentified    Int      @default(0)
-  incorrectIdentified  Int      @default(0)
-  scamsClicked         Int      @default(0)
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                  String   @id @default(uuid())
+  userId              String   @unique
+  rating              Int      @default(0)
+  totalEmails         Int      @default(0)
+  correctIdentified   Int      @default(0)
+  incorrectIdentified Int      @default(0)
+  scamsClicked        Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_stats")
 }
 
 model UserAnswer {
-  id           String   @id @default(uuid())
-  userId       String
-  emailId      String
-  userAnswer   Boolean  // true = phishing, false = legitimate
-  isCorrect    Boolean
-  answeredAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  userId     String
+  emailId    String
+  userAnswer Boolean
+  isCorrect  Boolean
+  answeredAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("user_answers")
   @@index([userId])
   @@index([emailId])
+  @@map("user_answers")
 }

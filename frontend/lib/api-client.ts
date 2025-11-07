@@ -110,8 +110,26 @@ export const emailAPI = {
         return apiFetch("/emails/random");
     },
 
+    getByCategory: async (category: string) => {
+        return apiFetch(`/emails/category/${category}`);
+    },
+
     getById: async (id: string) => {
         return apiFetch(`/emails/${id}`);
+    },
+
+    getDetails: async (id: string) => {
+        return apiFetch(`/emails/details/${id}`);
+    },
+
+    getHistory: async () => {
+        return apiFetch("/emails/history");
+    },
+
+    clearHistory: async () => {
+        return apiFetch("/emails/history", {
+            method: "DELETE",
+        });
     },
 };
 

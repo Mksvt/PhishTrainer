@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes";
 import emailRoutes from "./routes/email.routes";
 import simulationRoutes from "./routes/simulation.routes";
+import { connectRedis, disconnectRedis } from "./config/redis";
 
 // Завантаження змінних середовища
 dotenv.config();
@@ -56,10 +57,32 @@ app.use((err: any, req: Request, res: Response, next: any) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, async () => {
     console.log(`[SERVER] Сервер запущено на порту ${PORT}`);
     console.log(`[API] Доступний за адресою: http://localhost:${PORT}/api`);
     console.log(`[ENV] Середовище: ${process.env.NODE_ENV || "development"}`);
+
+    // Підключення до Redis
+    await connectRedis();
+});
+
+// Graceful shutdown
+process.on("SIGTERM", async () => {
+    console.log("[SERVER] SIGTERM отримано, вимикаємо сервер...");
+    server.close(async () => {
+        console.log("[SERVER] HTTP сервер вимкнено");
+        await disconnectRedis();
+        process.exit(0);
+    });
+});
+
+process.on("SIGINT", async () => {
+    console.log("[SERVER] SIGINT отримано, вимикаємо сервер...");
+    server.close(async () => {
+        console.log("[SERVER] HTTP сервер вимкнено");
+        await disconnectRedis();
+        process.exit(0);
+    });
 });
 
 export default app;
