@@ -1,16 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Shield, Zap, Award, ArrowRight, Target } from "lucide-react";
 
 export default function Home() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const router = useRouter();
-
     useEffect(() => {
         // Initialize demo user on first load
         const users = JSON.parse(localStorage.getItem("users") || "{}");
@@ -29,18 +25,7 @@ export default function Home() {
             };
             localStorage.setItem("users", JSON.stringify(users));
         }
-
-        // Check if user is logged in
-        const user = localStorage.getItem("user");
-        if (user) {
-            setIsLoggedIn(true);
-            router.push("/dashboard");
-        }
-    }, [router]);
-
-    if (isLoggedIn) {
-        return null;
-    }
+    }, []);
 
     return (
         <main className="min-h-screen bg-gradient-to-br from-background via-card to-background">
