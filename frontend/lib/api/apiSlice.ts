@@ -146,6 +146,22 @@ export const apiSlice = createApi({
             query: (id) => `/emails/${id}`,
         }),
 
+        getEmailHistory: builder.query<
+            { emails: ApiEmail[]; count: number },
+            void
+        >({
+            query: () => "/emails/history",
+            providesTags: ["History"],
+        }),
+
+        clearEmailHistory: builder.mutation<{ message: string }, void>({
+            query: () => ({
+                url: "/emails/history",
+                method: "DELETE",
+            }),
+            invalidatesTags: ["History"],
+        }),
+
         // Simulation endpoints
         checkAnswer: builder.mutation<CheckAnswerResponse, CheckAnswerRequest>({
             query: (data) => ({
@@ -200,6 +216,8 @@ export const {
     useGetAllEmailsQuery,
     useGetRandomEmailQuery,
     useGetEmailByIdQuery,
+    useGetEmailHistoryQuery,
+    useClearEmailHistoryMutation,
     useCheckAnswerMutation,
     useGetUserStatsQuery,
     useGetUserAnswerHistoryQuery,

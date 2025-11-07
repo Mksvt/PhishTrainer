@@ -17,8 +17,9 @@ import {
 import {
     useGetRandomEmailQuery,
     useCheckAnswerMutation,
+    useGetEmailHistoryQuery,
+    useClearEmailHistoryMutation,
 } from "@/lib/api/apiSlice";
-import { emailAPI } from "@/lib/api-client";
 import type { ApiEmail, CheckAnswerResponse } from "@/lib/api/types";
 
 // Функція для капіталізації тексту
@@ -48,6 +49,15 @@ export default function SimulationPage() {
     } = useGetRandomEmailQuery();
     const [checkAnswer, { isLoading: isCheckingAnswer }] =
         useCheckAnswerMutation();
+    const {
+        data: historyData,
+        isLoading: isLoadingHistory,
+        refetch: refetchHistory,
+    } = useGetEmailHistoryQuery(undefined, {
+        skip: !showHistory, // Only fetch when history is being shown
+    });
+    const [clearHistory, { isLoading: isClearingHistory }] =
+        useClearEmailHistoryMutation();
 
     useEffect(() => {
         // Перевірка авторизації
@@ -66,6 +76,12 @@ export default function SimulationPage() {
             setCurrentEmail(emailData.email);
         }
     }, [emailData]);
+
+    useEffect(() => {
+        if (historyData?.emails) {
+            setEmailHistory(historyData.emails);
+        }
+    }, [historyData]);
 
     const handleAnswer = async (isPhishing: boolean) => {
         if (!currentEmail) return;
@@ -94,18 +110,13 @@ export default function SimulationPage() {
     };
 
     const handleViewHistory = async () => {
-        try {
-            const response = await emailAPI.getHistory();
-            setEmailHistory(response.emails || []);
-            setShowHistory(true);
-        } catch (error) {
-            console.error("Помилка завантаження історії:", error);
-        }
+        setShowHistory(true);
+        refetchHistory(); // Fetch fresh data when opening history
     };
 
     const handleClearHistory = async () => {
         try {
-            await emailAPI.clearHistory();
+            await clearHistory().unwrap();
             setEmailHistory([]);
             setShowHistory(false);
             setEmailCount(0);
@@ -157,10 +168,13 @@ export default function SimulationPage() {
                                         variant="outline"
                                         size="sm"
                                         onClick={handleClearHistory}
+                                        disabled={isClearingHistory}
                                         className="text-xs sm:text-sm gap-2"
                                     >
                                         <RotateCcw className="w-4 h-4" />
-                                        Скинути
+                                        {isClearingHistory
+                                            ? "Скидання..."
+                                            : "Скинути"}
                                     </Button>
                                 )}
                             </div>
@@ -187,7 +201,14 @@ export default function SimulationPage() {
                                 </Button>
                             </div>
                             <div className="max-h-96 overflow-y-auto">
-                                {emailHistory.length > 0 ? (
+                                {isLoadingHistory ? (
+                                    <div className="text-center py-8">
+                                        <div className="w-8 h-8 border-4 border-border border-t-primary rounded-full animate-spin mx-auto mb-2" />
+                                        <p className="text-sm text-muted-foreground">
+                                            Завантаження історії...
+                                        </p>
+                                    </div>
+                                ) : emailHistory.length > 0 ? (
                                     <div className="space-y-2">
                                         {emailHistory.map((email, index) => (
                                             <div
