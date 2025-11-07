@@ -77,11 +77,6 @@ export default function ProfilePage() {
             ? JSON.parse(localStorage.getItem("user") || "{}")
             : {};
 
-    const accuracy =
-        stats.totalEmails > 0
-            ? Math.round((stats.correctIdentified / stats.totalEmails) * 100)
-            : 0;
-
     // Перетворюємо дані для графіка
     const performanceData = weeklyData?.weeklyProgress || [];
 

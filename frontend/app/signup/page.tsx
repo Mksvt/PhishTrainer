@@ -3,7 +3,6 @@
 import type React from "react";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -17,7 +16,6 @@ export default function SignupPage() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
-    const router = useRouter();
 
     const [register, { isLoading }] = useRegisterMutation();
 

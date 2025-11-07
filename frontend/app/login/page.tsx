@@ -3,7 +3,6 @@
 import type React from "react";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -15,7 +14,6 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const router = useRouter();
 
     const [login, { isLoading }] = useLoginMutation();
 
@@ -124,10 +122,6 @@ export default function LoginPage() {
                         </Link>
                     </div>
                 </Card>
-
-                <p className="text-center text-xs text-muted-foreground mt-6">
-                    Demo: test@example.com / password123
-                </p>
             </div>
         </div>
     );
