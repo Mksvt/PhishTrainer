@@ -44,7 +44,8 @@ export function Navbar() {
     return (
         <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-                <Link href="/dashboard" className="flex items-center gap-2">
+                {/* Logo and Title - Routes to / */}
+                <Link href="/" className="flex items-center gap-2">
                     <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                         <Shield className="w-6 h-6 text-primary-foreground" />
                     </div>
@@ -53,6 +54,31 @@ export function Navbar() {
                     </span>
                 </Link>
 
+                {/* Center Navigation - Dashboard and Simulation */}
+                {user && (
+                    <div className="flex items-center gap-2">
+                        <Link href="/dashboard">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-foreground hover:bg-foreground/10 hover:text-foreground"
+                            >
+                                Дашборд
+                            </Button>
+                        </Link>
+                        <Link href="/simulation">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-foreground hover:bg-foreground/10 hover:text-foreground"
+                            >
+                                Симуляція
+                            </Button>
+                        </Link>
+                    </div>
+                )}
+
+                {/* Right Side - Profile and Logout */}
                 {user && (
                     <div className="flex items-center gap-3">
                         <Link href="/profile">

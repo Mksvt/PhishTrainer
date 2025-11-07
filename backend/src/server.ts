@@ -37,6 +37,10 @@ app.get("/", (req: Request, res: Response) => {
     });
 });
 
+app.get("/health", (req: Request, res: Response) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/emails", emailRoutes);
 app.use("/api/simulation", simulationRoutes);
