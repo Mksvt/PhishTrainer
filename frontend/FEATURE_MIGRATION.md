@@ -58,6 +58,7 @@ features/
 ### Оновлені сторінки:
 
 #### `app/login/page.tsx` & `app/signup/page.tsx`
+
 ```typescript
 import { AuthForm } from "@/features/auth/components";
 
@@ -67,6 +68,7 @@ export default function LoginPage() {
 ```
 
 #### `app/dashboard/page.tsx`
+
 ```typescript
 import { StatCard } from "@/features/shared/ui";
 import { FeatureCard, InfoSection } from "@/features/dashboard/components";
@@ -76,16 +78,27 @@ import { useStats } from "@/features/shared/hooks";
 ```
 
 #### `app/profile/page.tsx`
+
 ```typescript
 import { StatCard, FullPageLoader, ErrorMessage } from "@/features/shared/ui";
-import { ProgressChart, AccuracyChart, AchievementStatus } from "@/features/profile/components";
+import {
+    ProgressChart,
+    AccuracyChart,
+    AchievementStatus,
+} from "@/features/profile/components";
 import { useAuth } from "@/features/auth/hooks";
 import { useStats, useWeeklyProgress } from "@/features/shared/hooks";
 ```
 
 #### `app/simulation/page.tsx`
+
 ```typescript
-import { EmailCard, EmailDecision, EmailFeedback, EmailHistoryModal } from "@/features/simulation/components";
+import {
+    EmailCard,
+    EmailDecision,
+    EmailFeedback,
+    EmailHistoryModal,
+} from "@/features/simulation/components";
 import { FullPageLoader } from "@/features/shared/ui";
 import { useSimulation, useEmailHistory } from "@/features/simulation/hooks";
 ```
@@ -93,26 +106,28 @@ import { useSimulation, useEmailHistory } from "@/features/simulation/hooks";
 ### Видалені файли:
 
 #### З `components/`:
-- ✅ auth-form.tsx
-- ✅ stat-card.tsx
-- ✅ feature-card.tsx
-- ✅ info-section.tsx
-- ✅ progress-chart.tsx
-- ✅ accuracy-chart.tsx
-- ✅ achievement-status.tsx
-- ✅ email-card.tsx
-- ✅ email-decision.tsx
-- ✅ email-feedback.tsx
-- ✅ email-history-modal.tsx
-- ✅ loading-spinner.tsx
-- ✅ error-message.tsx
-- ✅ logo.tsx
+
+-   ✅ auth-form.tsx
+-   ✅ stat-card.tsx
+-   ✅ feature-card.tsx
+-   ✅ info-section.tsx
+-   ✅ progress-chart.tsx
+-   ✅ accuracy-chart.tsx
+-   ✅ achievement-status.tsx
+-   ✅ email-card.tsx
+-   ✅ email-decision.tsx
+-   ✅ email-feedback.tsx
+-   ✅ email-history-modal.tsx
+-   ✅ loading-spinner.tsx
+-   ✅ error-message.tsx
+-   ✅ logo.tsx
 
 #### З `hooks/`:
-- ✅ use-auth.ts
-- ✅ use-simulation.ts
-- ✅ use-stats.ts
-- ✅ index.ts
+
+-   ✅ use-auth.ts
+-   ✅ use-simulation.ts
+-   ✅ use-stats.ts
+-   ✅ index.ts
 
 ### Переваги нової структури:
 
