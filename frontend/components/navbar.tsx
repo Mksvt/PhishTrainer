@@ -11,7 +11,7 @@ const isDev = process.env.NODE_ENV === "development";
 export function Navbar() {
     const router = useRouter();
     const [logout, { isLoading: isLoggingOut }] = useLogoutMutation();
-    
+
     // Отримуємо дані користувача через API
     const { data: profileData } = useGetProfileQuery();
     const user = profileData?.user;

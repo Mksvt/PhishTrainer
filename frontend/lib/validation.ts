@@ -16,4 +16,3 @@ export interface UserStats {
     incorrectIdentified: number;
     scamsClicked: number;
 }
-

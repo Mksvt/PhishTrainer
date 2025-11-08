@@ -24,7 +24,8 @@ import {
 
 export default function ProfilePage() {
     // RTK Query hooks
-    const { data: profileData, isLoading: isProfileLoading } = useGetProfileQuery();
+    const { data: profileData, isLoading: isProfileLoading } =
+        useGetProfileQuery();
     const { data: statsData, isLoading, error } = useGetUserStatsQuery();
     const { data: weeklyData, isLoading: isWeeklyLoading } =
         useGetWeeklyProgressQuery({ weeks: 4 });
