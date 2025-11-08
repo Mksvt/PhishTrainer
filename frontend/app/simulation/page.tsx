@@ -60,15 +60,8 @@ export default function SimulationPage() {
         useClearEmailHistoryMutation();
 
     useEffect(() => {
-        // Перевірка авторизації
-        const token =
-            typeof window !== "undefined"
-                ? localStorage.getItem("token")
-                : null;
-        if (!token) {
-            router.push("/login");
-            return;
-        }
+        // Middleware вже перевіряє аутентифікацію через cookies
+        // Немає необхідності перевіряти токен вручну
     }, [router]);
 
     useEffect(() => {

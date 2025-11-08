@@ -58,7 +58,6 @@ export interface ApiUserAnswer {
 
 export interface AuthResponse {
     message: string;
-    token: string;
     user: ApiUser & { stats: ApiUserStats };
 }
 

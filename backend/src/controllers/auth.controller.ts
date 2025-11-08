@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import { body, validationResult } from "express-validator";
 import prisma from "../config/database";
-import { generateToken } from "../utils/jwt.utils";
+import { generateToken, generateRefreshToken } from "../utils/jwt.utils";
 
 // Валідація для реєстрації
 export const registerValidation = [
@@ -64,12 +64,31 @@ export const register = async (req: Request, res: Response) => {
             },
         });
 
-        // Генерація токену
+        // Генерація токенів
         const token = generateToken(user.id);
+        const refreshToken = generateRefreshToken(user.id);
 
+        // Встановлюємо HttpOnly cookie для токену
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 днів
+            path: "/",
+        });
+
+        // Встановлюємо HttpOnly cookie для refresh токену
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 днів
+            path: "/",
+        });
+
+        // НЕ відправляємо токени в body, тільки дані користувача
         res.status(201).json({
             message: "Користувача успішно зареєстровано",
-            token,
             user: {
                 id: user.id,
                 email: user.email,
@@ -113,12 +132,31 @@ export const login = async (req: Request, res: Response) => {
                 .json({ error: "Невірна електронна адреса або пароль" });
         }
 
-        // Генерація токену
+        // Генерація токенів
         const token = generateToken(user.id);
+        const refreshToken = generateRefreshToken(user.id);
 
+        // Встановлюємо HttpOnly cookie для токену
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 днів
+            path: "/",
+        });
+
+        // Встановлюємо HttpOnly cookie для refresh токену
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 днів
+            path: "/",
+        });
+
+        // НЕ відправляємо токени в body, тільки дані користувача
         res.json({
             message: "Успішний вхід",
-            token,
             user: {
                 id: user.id,
                 email: user.email,
@@ -156,8 +194,15 @@ export const getProfile = async (req: Request, res: Response) => {
 // Вихід
 export const logout = async (req: Request, res: Response) => {
     try {
-        // Очищаємо cookie якщо вони використовуються
+        // Очищаємо всі cookies
         res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+        });
+
+        res.clearCookie("refreshToken", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",

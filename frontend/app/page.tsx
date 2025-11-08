@@ -1,21 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Shield, Zap, Award, ArrowRight, Target } from "lucide-react";
+import { useGetProfileQuery } from "@/lib/api/apiSlice";
 
 export default function Home() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    useEffect(() => {
-        // Перевіряємо, чи користувач залогінений
-        const user = localStorage.getItem("user");
-        if (user) {
-            setIsLoggedIn(true);
-        }
-    }, []);
+    // Перевіряємо, чи користувач залогінений через API
+    const { data: profileData } = useGetProfileQuery();
+    const isLoggedIn = !!profileData?.user;
 
     return (
         <main className="min-h-screen bg-linear-to-br from-background via-card to-background">

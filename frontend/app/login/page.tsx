@@ -4,16 +4,20 @@ import type React from "react";
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Shield } from "lucide-react";
 import { useLoginMutation } from "@/lib/api/apiSlice";
 
+const isDev = process.env.NODE_ENV === "development";
+
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const router = useRouter();
 
     const [login, { isLoading }] = useLoginMutation();
 
@@ -21,24 +25,23 @@ export default function LoginPage() {
         e.preventDefault();
         setError("");
 
-        console.log("Attempting login with:", email);
+        if (isDev) {
+            console.log("Attempting login with:", email);
+        }
 
         try {
             const response = await login({ email, password }).unwrap();
 
-            console.log("Успішний вхід:", response);
-            console.log("User:", response.user);
-            console.log("Token:", response.token);
+            if (isDev) {
+                console.log("Login successful:", response);
+            }
 
-            // Даємо час на збереження cookie
-            await new Promise((resolve) => setTimeout(resolve, 100));
-
-            console.log("Redirecting to dashboard...");
-
-            // Використовуємо window.location для гарантованого редіректу
-            window.location.href = "/dashboard";
+            // Redirect to dashboard (cookies встановлюються автоматично браузером)
+            router.push("/dashboard");
         } catch (err: any) {
-            console.error("Помилка входу:", err);
+            if (isDev) {
+                console.error("Login error:", err);
+            }
             setError(err.data?.error || "Невірна електронна адреса або пароль");
         }
     };

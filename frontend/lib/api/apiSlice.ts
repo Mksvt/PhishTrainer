@@ -14,17 +14,12 @@ import type {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
 
-// Базовий query з автентифікацією
+// Базовий query з автентифікацією через cookies
 const baseQuery = fetchBaseQuery({
     baseUrl: API_URL,
+    credentials: "include", // Важливо для відправки cookies
     prepareHeaders: (headers) => {
-        const token =
-            typeof window !== "undefined"
-                ? localStorage.getItem("token")
-                : null;
-        if (token) {
-            headers.set("Authorization", `Bearer ${token}`);
-        }
+        // Токени тепер в HttpOnly cookies, не потрібно додавати вручну
         return headers;
     },
 });
@@ -42,28 +37,6 @@ export const apiSlice = createApi({
                 method: "POST",
                 body: credentials,
             }),
-            async onQueryStarted(arg, { queryFulfilled }) {
-                try {
-                    const { data } = await queryFulfilled;
-                    if (typeof window !== "undefined") {
-                        // Зберігаємо в localStorage
-                        localStorage.setItem("token", data.token);
-                        localStorage.setItem("user", JSON.stringify(data.user));
-
-                        // Зберігаємо токен в cookie для middleware
-                        document.cookie = `token=${
-                            data.token
-                        }; path=/; max-age=${7 * 24 * 60 * 60}`; // 7 днів
-
-                        console.log(
-                            "Token saved to localStorage and cookie:",
-                            data.token
-                        );
-                    }
-                } catch (error) {
-                    console.error("Register error:", error);
-                }
-            },
             invalidatesTags: ["User", "Stats"],
         }),
 
@@ -73,28 +46,6 @@ export const apiSlice = createApi({
                 method: "POST",
                 body: credentials,
             }),
-            async onQueryStarted(arg, { queryFulfilled }) {
-                try {
-                    const { data } = await queryFulfilled;
-                    if (typeof window !== "undefined") {
-                        // Зберігаємо в localStorage
-                        localStorage.setItem("token", data.token);
-                        localStorage.setItem("user", JSON.stringify(data.user));
-
-                        // Зберігаємо токен в cookie для middleware
-                        document.cookie = `token=${
-                            data.token
-                        }; path=/; max-age=${7 * 24 * 60 * 60}`; // 7 днів
-
-                        console.log(
-                            "Token saved to localStorage and cookie:",
-                            data.token
-                        );
-                    }
-                } catch (error) {
-                    console.error("Login error:", error);
-                }
-            },
             invalidatesTags: ["User", "Stats"],
         }),
 
@@ -111,24 +62,6 @@ export const apiSlice = createApi({
                 url: "/auth/logout",
                 method: "POST",
             }),
-            async onQueryStarted(arg, { queryFulfilled }) {
-                try {
-                    await queryFulfilled;
-                    if (typeof window !== "undefined") {
-                        // Видаляємо з localStorage
-                        localStorage.removeItem("token");
-                        localStorage.removeItem("user");
-
-                        // Видаляємо cookie
-                        document.cookie =
-                            "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-
-                        console.log("Logout successful - tokens cleared");
-                    }
-                } catch (error) {
-                    console.error("Logout error:", error);
-                }
-            },
             invalidatesTags: ["User", "Stats", "History"],
         }),
 

@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Card } from "@/components/ui/card";
 import {
@@ -21,28 +19,19 @@ import { Trophy, TrendingUp, AlertCircle } from "lucide-react";
 import {
     useGetUserStatsQuery,
     useGetWeeklyProgressQuery,
+    useGetProfileQuery,
 } from "@/lib/api/apiSlice";
 
 export default function ProfilePage() {
-    const router = useRouter();
-
     // RTK Query hooks
+    const { data: profileData, isLoading: isProfileLoading } = useGetProfileQuery();
     const { data: statsData, isLoading, error } = useGetUserStatsQuery();
     const { data: weeklyData, isLoading: isWeeklyLoading } =
         useGetWeeklyProgressQuery({ weeks: 4 });
 
-    useEffect(() => {
-        const token =
-            typeof window !== "undefined"
-                ? localStorage.getItem("token")
-                : null;
-        if (!token) {
-            router.push("/login");
-            return;
-        }
-    }, [router]);
+    const user = profileData?.user;
 
-    if (isLoading) {
+    if (isProfileLoading || isLoading) {
         return (
             <>
                 <Navbar />
@@ -72,10 +61,6 @@ export default function ProfilePage() {
     }
 
     const stats = statsData.stats;
-    const userData =
-        typeof window !== "undefined"
-            ? JSON.parse(localStorage.getItem("user") || "{}")
-            : {};
 
     // Перетворюємо дані для графіка
     const performanceData = weeklyData?.weeklyProgress || [];
@@ -98,10 +83,10 @@ export default function ProfilePage() {
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-6 mb-4">
                             <div className="min-w-0">
                                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-1 wrap-break-word">
-                                    {userData.name || "Користувач"}
+                                    {user?.name || "Користувач"}
                                 </h1>
                                 <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                                    {userData.email || ""}
+                                    {user?.email || ""}
                                 </p>
                             </div>
                             <div className="text-left sm:text-right shrink-0">

@@ -4,11 +4,14 @@ import type React from "react";
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Shield } from "lucide-react";
 import { useRegisterMutation } from "@/lib/api/apiSlice";
+
+const isDev = process.env.NODE_ENV === "development";
 
 export default function SignupPage() {
     const [name, setName] = useState("");
@@ -16,6 +19,7 @@ export default function SignupPage() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
+    const router = useRouter();
 
     const [register, { isLoading }] = useRegisterMutation();
 
@@ -33,24 +37,23 @@ export default function SignupPage() {
             return;
         }
 
-        console.log("Attempting registration with:", { email, name });
+        if (isDev) {
+            console.log("Attempting registration with:", { email, name });
+        }
 
         try {
             const response = await register({ email, name, password }).unwrap();
 
-            console.log("Успішна реєстрація:", response);
-            console.log("User:", response.user);
-            console.log("Token:", response.token);
+            if (isDev) {
+                console.log("Registration successful:", response);
+            }
 
-            // Даємо час на збереження cookie
-            await new Promise((resolve) => setTimeout(resolve, 100));
-
-            console.log("Redirecting to dashboard...");
-
-            // Використовуємо window.location для гарантованого редіректу
-            window.location.href = "/dashboard";
+            // Redirect to dashboard (cookies встановлюються автоматично браузером)
+            router.push("/dashboard");
         } catch (err: any) {
-            console.error("Помилка реєстрації:", err);
+            if (isDev) {
+                console.error("Registration error:", err);
+            }
             setError(
                 err.data?.error || "Помилка при реєстрації. Спробуйте пізніше."
             );

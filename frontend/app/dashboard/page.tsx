@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
@@ -14,26 +12,16 @@ import {
     ArrowRight,
     Shield,
 } from "lucide-react";
-import { useGetUserStatsQuery } from "@/lib/api/apiSlice";
+import { useGetUserStatsQuery, useGetProfileQuery } from "@/lib/api/apiSlice";
 
 export default function DashboardPage() {
-    const router = useRouter();
-
-    // RTK Query hook
+    // RTK Query hooks
+    const { data: profileData, isLoading: isProfileLoading } = useGetProfileQuery();
     const { data: statsData, isLoading, error } = useGetUserStatsQuery();
 
-    useEffect(() => {
-        const token =
-            typeof window !== "undefined"
-                ? localStorage.getItem("token")
-                : null;
-        if (!token) {
-            router.push("/login");
-            return;
-        }
-    }, [router]);
+    const user = profileData?.user;
 
-    if (isLoading) {
+    if (isProfileLoading || isLoading) {
         return (
             <>
                 <Navbar />
@@ -63,10 +51,6 @@ export default function DashboardPage() {
     }
 
     const stats = statsData.stats;
-    const userData =
-        typeof window !== "undefined"
-            ? JSON.parse(localStorage.getItem("user") || "{}")
-            : {};
 
     return (
         <>
@@ -75,7 +59,7 @@ export default function DashboardPage() {
                 <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
                     <div className="mb-8 sm:mb-12">
                         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2 text-foreground">
-                            Ласкаво просимо, {userData.name}!
+                            Ласкаво просимо, {user?.name || "Користувач"}!
                         </h1>
                         <p className="text-sm sm:text-base text-muted-foreground">
                             Відслідковуйте свій прогрес у розпізнаванні

@@ -1,43 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Shield, LogOut, User } from "lucide-react";
-import { useLogoutMutation } from "@/lib/api/apiSlice";
+import { useLogoutMutation, useGetProfileQuery } from "@/lib/api/apiSlice";
+
+const isDev = process.env.NODE_ENV === "development";
 
 export function Navbar() {
-    const [user, setUser] = useState<any>(null);
     const router = useRouter();
-    const [logout, { isLoading }] = useLogoutMutation();
-
-    useEffect(() => {
-        const userData = localStorage.getItem("user");
-        if (userData) {
-            setUser(JSON.parse(userData));
-        }
-    }, []);
+    const [logout, { isLoading: isLoggingOut }] = useLogoutMutation();
+    
+    // Отримуємо дані користувача через API
+    const { data: profileData } = useGetProfileQuery();
+    const user = profileData?.user;
 
     const handleLogout = async () => {
         try {
-            console.log("Logging out...");
+            if (isDev) {
+                console.log("Logging out...");
+            }
+
             await logout().unwrap();
 
-            setUser(null);
-            console.log("Redirecting to login...");
+            if (isDev) {
+                console.log("Redirecting to home...");
+            }
 
-            // Використовуємо window.location для гарантованого редіректу
-            window.location.href = "/";
+            router.push("/");
         } catch (error) {
-            console.error("Logout error:", error);
-            // Навіть якщо є помилка, все одно очищаємо локальні дані
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
-            document.cookie =
-                "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-            setUser(null);
-            window.location.href = "/";
+            if (isDev) {
+                console.error("Logout error:", error);
+            }
+
+            // Якщо logout запит провалився, все одно перенаправляємо
+            router.push("/");
         }
     };
 
@@ -97,12 +95,12 @@ export function Navbar() {
                             variant="ghost"
                             size="sm"
                             onClick={handleLogout}
-                            disabled={isLoading}
+                            disabled={isLoggingOut}
                             className="gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
                         >
                             <LogOut className="w-4 h-4" />
                             <span className="hidden sm:inline">
-                                {isLoading ? "Вихід..." : "Вихід"}
+                                {isLoggingOut ? "Вихід..." : "Вихід"}
                             </span>
                         </Button>
                     </div>
