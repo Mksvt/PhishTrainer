@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_URL } from "../utils/constants";
 import type {
     ApiUser,
     ApiUserStats,
@@ -12,25 +13,17 @@ import type {
     WeeklyProgressData,
 } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
-
-// Базовий query з автентифікацією через cookies
 const baseQuery = fetchBaseQuery({
     baseUrl: API_URL,
-    credentials: "include", // Важливо для відправки cookies
-    prepareHeaders: (headers) => {
-        // Токени тепер в HttpOnly cookies, не потрібно додавати вручну
-        return headers;
-    },
+    credentials: "include",
+    prepareHeaders: (headers) => headers,
 });
 
-// API slice
 export const apiSlice = createApi({
     reducerPath: "api",
     baseQuery,
     tagTypes: ["User", "Stats", "Emails", "History"],
     endpoints: (builder) => ({
-        // Auth endpoints
         register: builder.mutation<AuthResponse, RegisterRequest>({
             query: (credentials) => ({
                 url: "/auth/register",
@@ -115,12 +108,9 @@ export const apiSlice = createApi({
             { limit?: number; offset?: number } | void
         >({
             query: (params) => {
-                const queryParams = params
-                    ? `?limit=${params.limit || 50}&offset=${
-                          params.offset || 0
-                      }`
-                    : "";
-                return `/simulation/history${queryParams}`;
+                const limit = params?.limit || 50;
+                const offset = params?.offset || 0;
+                return `/simulation/history?limit=${limit}&offset=${offset}`;
             },
             providesTags: ["History"],
         }),
@@ -130,17 +120,14 @@ export const apiSlice = createApi({
             { weeks?: number } | void
         >({
             query: (params) => {
-                const queryParams = params?.weeks
-                    ? `?weeks=${params.weeks}`
-                    : "";
-                return `/simulation/weekly-progress${queryParams}`;
+                const weeks = params?.weeks || 4;
+                return `/simulation/weekly-progress?weeks=${weeks}`;
             },
             providesTags: ["Stats"],
         }),
     }),
 });
 
-// Export hooks
 export const {
     useRegisterMutation,
     useLoginMutation,

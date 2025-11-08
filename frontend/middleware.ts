@@ -1,26 +1,23 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+const PROTECTED_PATHS = ["/dashboard", "/profile", "/simulation"];
+const AUTH_PATHS = ["/login", "/signup"];
+
 export function middleware(request: NextRequest) {
-    // Перевіряємо наявність токену в HttpOnly cookies
     const token = request.cookies.get("token");
     const isAuthenticated = !!token;
 
-    // Захищені маршрути
-    const protectedPaths = ["/dashboard", "/profile", "/simulation"];
-    const isProtectedPath = protectedPaths.some((path) =>
-        request.nextUrl.pathname.startsWith(path)
+    const { pathname } = request.nextUrl;
+    const isProtectedPath = PROTECTED_PATHS.some((path) =>
+        pathname.startsWith(path)
     );
+    const isAuthPath = AUTH_PATHS.includes(pathname);
 
-    // Redirect to home if not authenticated and trying to access protected page
     if (isProtectedPath && !isAuthenticated) {
         const url = new URL("/", request.url);
-        url.searchParams.set("redirect", request.nextUrl.pathname);
+        url.searchParams.set("redirect", pathname);
         return NextResponse.redirect(url);
     }
-
-    // Redirect to dashboard if authenticated and trying to access auth pages
-    const authPaths = ["/login", "/signup"];
-    const isAuthPath = authPaths.includes(request.nextUrl.pathname);
 
     if (isAuthPath && isAuthenticated) {
         return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -30,15 +27,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api (API routes)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - public folder
-         */
-        "/((?!api|_next/static|_next/image|favicon.ico|public).*)",
-    ],
+    matcher: ["/((?!api|_next/static|_next/image|favicon.ico|public).*)"],
 };
