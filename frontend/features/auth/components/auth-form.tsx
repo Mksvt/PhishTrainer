@@ -61,22 +61,32 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-br from-background via-card to-background px-3 sm:px-4">
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-40 -right-40 w-60 h-60 sm:w-80 sm:h-80 bg-primary/10 rounded-full blur-3xl" />
-                <div className="absolute -bottom-40 -left-40 w-60 h-60 sm:w-80 sm:h-80 bg-secondary/10 rounded-full blur-3xl" />
+        <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-br from-slate-950 via-blue-950 to-slate-950 px-3 sm:px-4">
+            {/* Animated Background */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute top-1/3 -left-40 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[100px_100px]" />
             </div>
 
             <div className="relative z-10 w-full max-w-md">
                 <div className="flex items-center justify-center mb-6 sm:mb-8">
-                    <Logo size="lg" />
+                    <div className="text-center">
+                        <h1 className="text-2xl sm:text-3xl font-bold bg-linear-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                            PhishTrainer
+                        </h1>
+                        <p className="text-xs sm:text-sm text-gray-400 mt-1">
+                            Next-Gen Security Training
+                        </p>
+                    </div>
                 </div>
 
-                <Card className="p-6 sm:p-8 backdrop-blur-sm bg-card/50 border-border/50">
-                    <h2 className="text-xl sm:text-2xl font-bold mb-2 text-foreground">
+                <Card className="p-6 sm:p-8 backdrop-blur-md bg-white/5 border border-white/10">
+                    <h2 className="text-xl sm:text-2xl font-bold mb-2 text-white">
                         {mode === "login" ? "Вхід" : "Реєстрація"}
                     </h2>
-                    <p className="text-sm sm:text-base text-muted-foreground mb-6">
+                    <p className="text-sm sm:text-base text-gray-300 mb-6">
                         {mode === "login"
                             ? "Введіть вашу електронну адресу та пароль"
                             : "Створіть акаунт, щоб розпочати навчання"}
@@ -87,7 +97,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
 
                         {mode === "signup" && (
                             <div>
-                                <label className="block text-xs sm:text-sm font-medium mb-2 text-foreground">
+                                <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-200">
                                     Ім'я
                                 </label>
                                 <Input
@@ -95,14 +105,14 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder="Ваше ім'я"
-                                    className="w-full text-sm sm:text-base"
+                                    className="w-full text-sm sm:text-base bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                                     required
                                 />
                             </div>
                         )}
 
                         <div>
-                            <label className="block text-xs sm:text-sm font-medium mb-2 text-foreground">
+                            <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-200">
                                 Електронна адреса
                             </label>
                             <Input
@@ -110,13 +120,13 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="your@email.com"
-                                className="w-full text-sm sm:text-base"
+                                className="w-full text-sm sm:text-base bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                                 required
                             />
                         </div>
 
                         <div>
-                            <label className="block text-xs sm:text-sm font-medium mb-2 text-foreground">
+                            <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-200">
                                 Пароль
                             </label>
                             <Input
@@ -124,14 +134,14 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="••••••••"
-                                className="w-full text-sm sm:text-base"
+                                className="w-full text-sm sm:text-base bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                                 required
                             />
                         </div>
 
                         {mode === "signup" && (
                             <div>
-                                <label className="block text-xs sm:text-sm font-medium mb-2 text-foreground">
+                                <label className="block text-xs sm:text-sm font-medium mb-2 text-gray-200">
                                     Підтвердіть пароль
                                 </label>
                                 <Input
@@ -141,7 +151,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
                                         setConfirmPassword(e.target.value)
                                     }
                                     placeholder="••••••••"
-                                    className="w-full text-sm sm:text-base"
+                                    className="w-full text-sm sm:text-base bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                                     required
                                 />
                             </div>
@@ -150,7 +160,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
                         <Button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-primary hover:bg-primary/90 h-10 sm:h-11 text-sm sm:text-base"
+                            className="w-full bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white border-0 shadow-lg shadow-blue-500/50 h-10 sm:h-11 text-sm sm:text-base"
                         >
                             {isLoading
                                 ? mode === "login"
@@ -162,13 +172,13 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
                         </Button>
                     </form>
 
-                    <div className="mt-6 text-center text-xs sm:text-sm text-muted-foreground">
+                    <div className="mt-6 text-center text-xs sm:text-sm text-gray-300">
                         {mode === "login" ? (
                             <>
                                 Немає акаунту?{" "}
                                 <Link
                                     href="/signup"
-                                    className="text-primary hover:underline font-medium"
+                                    className="text-cyan-400 hover:text-cyan-300 hover:underline font-medium"
                                 >
                                     Зареєструйтеся
                                 </Link>
@@ -178,7 +188,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
                                 Вже маєте акаунт?{" "}
                                 <Link
                                     href="/login"
-                                    className="text-primary hover:underline font-medium"
+                                    className="text-cyan-400 hover:text-cyan-300 hover:underline font-medium"
                                 >
                                     Увійти
                                 </Link>

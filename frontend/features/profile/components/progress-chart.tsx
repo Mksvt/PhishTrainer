@@ -21,41 +21,41 @@ interface ProgressChartProps {
 export const ProgressChart = ({ data, isLoading }: ProgressChartProps) => {
     if (isLoading) {
         return (
-            <Card className="p-3 sm:p-6 backdrop-blur-sm bg-card/50 border-border/50 overflow-hidden flex flex-col">
-                <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 text-foreground truncate">
+            <div className="flex flex-col h-full">
+                <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 text-white truncate">
                     Прогрес за тижнями
                 </h2>
                 <div className="flex-1 flex items-center justify-center">
                     <div className="text-center">
-                        <div className="w-8 h-8 border-4 border-border border-t-primary rounded-full animate-spin mx-auto mb-2" />
-                        <p className="text-xs sm:text-sm text-muted-foreground">
+                        <div className="w-8 h-8 border-4 border-white/20 border-t-cyan-400 rounded-full animate-spin mx-auto mb-2" />
+                        <p className="text-xs sm:text-sm text-gray-400">
                             Завантаження...
                         </p>
                     </div>
                 </div>
-            </Card>
+            </div>
         );
     }
 
     if (data.length === 0) {
         return (
-            <Card className="p-3 sm:p-6 backdrop-blur-sm bg-card/50 border-border/50 overflow-hidden flex flex-col">
-                <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 text-foreground truncate">
+            <div className="flex flex-col h-full">
+                <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 text-white truncate">
                     Прогрес за тижнями
                 </h2>
-                <div className="flex-1 flex items-center justify-center text-muted-foreground text-xs sm:text-sm">
+                <div className="flex-1 flex items-center justify-center text-gray-400 text-xs sm:text-sm">
                     Немає даних для відображення
                 </div>
-            </Card>
+            </div>
         );
     }
 
     return (
-        <Card className="p-3 sm:p-6 backdrop-blur-sm bg-card/50 border-border/50 overflow-hidden flex flex-col">
-            <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 text-foreground truncate">
+        <div className="flex flex-col h-full">
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 text-white truncate">
                 Прогрес за тижнями
             </h2>
-            <div className="w-full overflow-x-auto -mx-3 sm:-mx-6 px-3 sm:px-6 flex-1">
+            <div className="w-full overflow-x-auto flex-1">
                 <ResponsiveContainer width="100%" height="100%" minWidth={300}>
                     <LineChart
                         data={data}
@@ -63,35 +63,43 @@ export const ProgressChart = ({ data, isLoading }: ProgressChartProps) => {
                     >
                         <CartesianGrid
                             strokeDasharray="3 3"
-                            stroke="var(--color-border)"
+                            stroke="rgba(255,255,255,0.1)"
                         />
                         <XAxis
                             dataKey="week"
-                            stroke="var(--color-muted-foreground)"
-                            tick={{ fontSize: 10 }}
+                            stroke="rgba(255,255,255,0.5)"
+                            tick={{
+                                fontSize: 10,
+                                fill: "rgba(255,255,255,0.7)",
+                            }}
                             angle={-45}
                             textAnchor="end"
                             height={60}
                         />
                         <YAxis
-                            stroke="var(--color-muted-foreground)"
-                            tick={{ fontSize: 10 }}
+                            stroke="rgba(255,255,255,0.5)"
+                            tick={{
+                                fontSize: 10,
+                                fill: "rgba(255,255,255,0.7)",
+                            }}
                             width={30}
                         />
                         <Tooltip
                             contentStyle={{
-                                backgroundColor: "var(--color-card)",
-                                border: "1px solid var(--color-border)",
+                                backgroundColor: "rgba(15, 23, 42, 0.9)",
+                                border: "1px solid rgba(255,255,255,0.1)",
                                 borderRadius: "8px",
-                                color: "var(--color-foreground)",
+                                color: "white",
                                 fontSize: "12px",
                             }}
                         />
-                        <Legend wrapperStyle={{ fontSize: "12px" }} />
+                        <Legend
+                            wrapperStyle={{ fontSize: "12px", color: "white" }}
+                        />
                         <Line
                             type="monotone"
                             dataKey="correct"
-                            stroke="var(--color-accent)"
+                            stroke="#22d3ee"
                             name="Правильно"
                             strokeWidth={2}
                             dot={{ r: 3 }}
@@ -99,7 +107,7 @@ export const ProgressChart = ({ data, isLoading }: ProgressChartProps) => {
                         <Line
                             type="monotone"
                             dataKey="missed"
-                            stroke="var(--color-primary)"
+                            stroke="#3b82f6"
                             name="Пропущено"
                             strokeWidth={2}
                             dot={{ r: 3 }}
@@ -107,7 +115,7 @@ export const ProgressChart = ({ data, isLoading }: ProgressChartProps) => {
                         <Line
                             type="monotone"
                             dataKey="clicked"
-                            stroke="var(--color-destructive)"
+                            stroke="#ef4444"
                             name="Попалися"
                             strokeWidth={2}
                             dot={{ r: 3 }}
@@ -115,6 +123,6 @@ export const ProgressChart = ({ data, isLoading }: ProgressChartProps) => {
                     </LineChart>
                 </ResponsiveContainer>
             </div>
-        </Card>
+        </div>
     );
 };

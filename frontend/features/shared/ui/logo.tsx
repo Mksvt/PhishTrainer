@@ -19,10 +19,10 @@ export const Logo = ({ size = "md", showText = true }: LogoProps) => {
             <div
                 className={`${classes.container} bg-primary rounded-lg flex items-center justify-center shrink-0 p-1.5`}
             >
-                <Image 
-                    src="/logo.svg" 
-                    alt="PhishTrainer Logo" 
-                    width={classes.icon} 
+                <Image
+                    src="/logo.svg"
+                    alt="PhishTrainer Logo"
+                    width={classes.icon}
                     height={classes.icon}
                     className="w-full h-full"
                 />

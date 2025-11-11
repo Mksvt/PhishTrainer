@@ -31,25 +31,28 @@ const infoItems: InfoSectionItem[] = [
 
 export const InfoSection = () => {
     return (
-        <Card className="p-8 backdrop-blur-sm bg-linear-to-r from-primary/10 to-secondary/10 border border-primary/20">
-            <h2 className="text-2xl font-bold mb-4 text-foreground">
+        <div>
+            <h2 className="text-2xl font-bold mb-6 text-white">
                 Як це працює?
             </h2>
-            <div className="space-y-4 text-muted-foreground">
+            <div className="space-y-4">
                 {infoItems.map((item) => (
                     <div key={item.step} className="flex gap-4">
-                        <div className="w-8 h-8 rounded-full bg-primary/30 flex items-center justify-center shrink-0 text-primary font-bold">
-                            {item.step}
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-md" />
+                            <div className="relative w-10 h-10 rounded-full bg-linear-to-r from-blue-500 to-cyan-500 flex items-center justify-center shrink-0 text-white font-bold">
+                                {item.step}
+                            </div>
                         </div>
                         <div>
-                            <h4 className="font-bold text-foreground mb-1">
+                            <h4 className="font-bold text-white mb-1">
                                 {item.title}
                             </h4>
-                            <p>{item.description}</p>
+                            <p className="text-gray-300">{item.description}</p>
                         </div>
                     </div>
                 ))}
             </div>
-        </Card>
+        </div>
     );
 };

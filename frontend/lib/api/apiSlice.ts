@@ -1,4 +1,10 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+    createApi,
+    fetchBaseQuery,
+    type BaseQueryFn,
+    type FetchArgs,
+    type FetchBaseQueryError,
+} from "@reduxjs/toolkit/query/react";
 import { API_URL } from "../utils/constants";
 import type {
     ApiUser,
@@ -19,9 +25,45 @@ const baseQuery = fetchBaseQuery({
     prepareHeaders: (headers) => headers,
 });
 
+const baseQueryWithReauth: BaseQueryFn<
+    string | FetchArgs,
+    unknown,
+    FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+    let result = await baseQuery(args, api, extraOptions);
+
+    if (result.error && result.error.status === 401) {
+        const errorData = result.error.data as any;
+
+        if (errorData?.code === "TOKEN_EXPIRED") {
+            console.log("Access token expired, trying to refresh...");
+
+            const refreshResult = await baseQuery(
+                {
+                    url: "/auth/refresh",
+                    method: "POST",
+                },
+                api,
+                extraOptions
+            );
+
+            if (refreshResult.data) {
+                console.log(
+                    "Token refreshed successfully, retrying request..."
+                );
+                result = await baseQuery(args, api, extraOptions);
+            } else {
+                window.location.href = "/login";
+            }
+        }
+    }
+
+    return result;
+};
+
 export const apiSlice = createApi({
     reducerPath: "api",
-    baseQuery,
+    baseQuery: baseQueryWithReauth,
     tagTypes: ["User", "Stats", "Emails", "History"],
     endpoints: (builder) => ({
         register: builder.mutation<AuthResponse, RegisterRequest>({
@@ -58,7 +100,6 @@ export const apiSlice = createApi({
             invalidatesTags: ["User", "Stats", "History"],
         }),
 
-        // Email endpoints
         getAllEmails: builder.query<{ emails: ApiEmail[] }, void>({
             query: () => "/emails",
             providesTags: ["Emails"],

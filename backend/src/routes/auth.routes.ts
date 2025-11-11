@@ -4,18 +4,19 @@ import {
     login,
     logout,
     getProfile,
+    refreshToken,
+} from "../controllers/auth.controller";
+import {
     registerValidation,
     loginValidation,
-} from "../controllers/auth.controller";
+} from "../validators/auth.validator";
 import { authMiddleware } from "../middleware/auth.middleware";
 
 const router = Router();
 
-// Публічні маршрути
 router.post("/register", registerValidation, register);
 router.post("/login", loginValidation, login);
-
-// Захищені маршрути
+router.post("/refresh", refreshToken);
 router.get("/profile", authMiddleware, getProfile);
 router.post("/logout", authMiddleware, logout);
 

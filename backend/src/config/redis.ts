@@ -11,29 +11,33 @@ const redisClient = createClient({
     },
 } as RedisClientOptions);
 
-redisClient.on("error", (err: Error) =>
-    console.error("Redis Client Error", err)
-);
-redisClient.on("connect", () => console.log("Redis Client Connected"));
-redisClient.on("ready", () => console.log("Redis Client Ready"));
+redisClient.on("error", (err: Error) => {
+    if (process.env.NODE_ENV === "development") {
+        console.error("Redis Client Error", err);
+    }
+});
 
-export const connectRedis = async () => {
+export const connectRedis = async (): Promise<void> => {
     try {
         if (!redisClient.isOpen) {
             await redisClient.connect();
         }
     } catch (error) {
-        console.error("Redis connection error:", error);
+        if (process.env.NODE_ENV === "development") {
+            console.error("Redis connection error:", error);
+        }
     }
 };
 
-export const disconnectRedis = async () => {
+export const disconnectRedis = async (): Promise<void> => {
     try {
         if (redisClient.isOpen) {
             await redisClient.quit();
         }
     } catch (error) {
-        console.error("Redis disconnection error:", error);
+        if (process.env.NODE_ENV === "development") {
+            console.error("Redis disconnection error:", error);
+        }
     }
 };
 

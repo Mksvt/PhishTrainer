@@ -1,57 +1,41 @@
 import redisClient from "../config/redis";
 import { phishingEmails } from "../data/phishing-emails";
+import { REDIS_CONFIG } from "../constants";
+import { EmailDTO } from "../types";
 
-const SHOWN_EMAILS_KEY = "shown_emails:";
-const SHOWN_EMAILS_EXPIRY = 15 * 60; // 15 minutes
-const MAX_RECENT_EMAILS = 15; // Не повторювати останні 15 листів
-
-/**
- * Отримати список листів, що були показані користувачу за останній час
- */
 export const getShownEmails = async (userId: string): Promise<string[]> => {
     try {
-        const key = `${SHOWN_EMAILS_KEY}${userId}`;
+        const key = `${REDIS_CONFIG.SHOWN_EMAILS_KEY_PREFIX}${userId}`;
         const shown = await redisClient.lRange(key, 0, -1);
         return shown || [];
     } catch (error) {
-        console.error("Error getting shown emails from Redis:", error);
         return [];
     }
 };
 
-/**
- * Додати лист до списку показаних
- */
 export const addShownEmail = async (
     userId: string,
     emailId: string
 ): Promise<void> => {
     try {
-        const key = `${SHOWN_EMAILS_KEY}${userId}`;
-        // Добавити на початок списку
+        const key = `${REDIS_CONFIG.SHOWN_EMAILS_KEY_PREFIX}${userId}`;
         await redisClient.lPush(key, emailId);
-        // Зберігати тільки останні N листів
-        await redisClient.lTrim(key, 0, MAX_RECENT_EMAILS - 1);
-        // Встановити TTL
-        await redisClient.expire(key, SHOWN_EMAILS_EXPIRY);
+        await redisClient.lTrim(key, 0, REDIS_CONFIG.MAX_RECENT_EMAILS - 1);
+        await redisClient.expire(key, REDIS_CONFIG.SHOWN_EMAILS_EXPIRY);
     } catch (error) {
-        console.error("Error adding shown email to Redis:", error);
+        return;
     }
 };
 
-/**
- * Отримати випадковий лист, який користувач ще не бачив (або давно бачив)
- */
-export const getRandomUnshownEmail = async (userId: string) => {
+export const getRandomUnshownEmail = async (
+    userId: string
+): Promise<EmailDTO> => {
     try {
         const shownEmailIds = await getShownEmails(userId);
-
-        // Фільтруємо листи, що були показані
         const availableEmails = phishingEmails.filter(
             (email) => !shownEmailIds.includes(email.id)
         );
 
-        // Якщо всі листи було показано, очищуємо список та повертаємо випадковий
         let selectedEmail;
         if (availableEmails.length === 0) {
             const randomIndex = Math.floor(
@@ -65,7 +49,6 @@ export const getRandomUnshownEmail = async (userId: string) => {
             selectedEmail = availableEmails[randomIndex];
         }
 
-        // Записуємо що цей лист було показано
         await addShownEmail(userId, selectedEmail.id);
 
         return {
@@ -77,8 +60,6 @@ export const getRandomUnshownEmail = async (userId: string) => {
             category: selectedEmail.category,
         };
     } catch (error) {
-        console.error("Error getting random unshown email:", error);
-        // Fallback - повертаємо просто випадковий лист
         const randomIndex = Math.floor(Math.random() * phishingEmails.length);
         const email = phishingEmails[randomIndex];
         return {
@@ -92,66 +73,48 @@ export const getRandomUnshownEmail = async (userId: string) => {
     }
 };
 
-/**
- * Отримати випадковий лист за категорією, який користувач ще не бачив
- */
 export const getRandomEmailByCategory = async (
     userId: string,
     category: string
-) => {
-    try {
-        const shownEmailIds = await getShownEmails(userId);
+): Promise<EmailDTO> => {
+    const shownEmailIds = await getShownEmails(userId);
+    const availableEmails = phishingEmails.filter(
+        (email) =>
+            email.category === category && !shownEmailIds.includes(email.id)
+    );
 
-        // Фільтруємо листи за категорією та що не були показані
-        const availableEmails = phishingEmails.filter(
-            (email) =>
-                email.category === category && !shownEmailIds.includes(email.id)
+    let selectedEmail;
+    if (availableEmails.length === 0) {
+        const categoryEmails = phishingEmails.filter(
+            (email) => email.category === category
         );
-
-        let selectedEmail;
-        if (availableEmails.length === 0) {
-            // Якщо всі листи в категорії було показано, повертаємо випадковий
-            const categoryEmails = phishingEmails.filter(
-                (email) => email.category === category
-            );
-            if (categoryEmails.length === 0) {
-                throw new Error(`Category ${category} not found`);
-            }
-            const randomIndex = Math.floor(
-                Math.random() * categoryEmails.length
-            );
-            selectedEmail = categoryEmails[randomIndex];
-        } else {
-            const randomIndex = Math.floor(
-                Math.random() * availableEmails.length
-            );
-            selectedEmail = availableEmails[randomIndex];
+        if (categoryEmails.length === 0) {
+            throw new Error(`Category ${category} not found`);
         }
-
-        await addShownEmail(userId, selectedEmail.id);
-
-        return {
-            id: selectedEmail.id,
-            subject: selectedEmail.subject,
-            from: selectedEmail.from,
-            body: selectedEmail.body,
-            difficulty: selectedEmail.difficulty,
-            category: selectedEmail.category,
-        };
-    } catch (error) {
-        console.error("Error getting random email by category:", error);
-        throw error;
+        const randomIndex = Math.floor(Math.random() * categoryEmails.length);
+        selectedEmail = categoryEmails[randomIndex];
+    } else {
+        const randomIndex = Math.floor(Math.random() * availableEmails.length);
+        selectedEmail = availableEmails[randomIndex];
     }
+
+    await addShownEmail(userId, selectedEmail.id);
+
+    return {
+        id: selectedEmail.id,
+        subject: selectedEmail.subject,
+        from: selectedEmail.from,
+        body: selectedEmail.body,
+        difficulty: selectedEmail.difficulty,
+        category: selectedEmail.category,
+    };
 };
 
-/**
- * Очистити історію показаних листів для користувача
- */
 export const clearUserEmailHistory = async (userId: string): Promise<void> => {
     try {
-        const key = `${SHOWN_EMAILS_KEY}${userId}`;
+        const key = `${REDIS_CONFIG.SHOWN_EMAILS_KEY_PREFIX}${userId}`;
         await redisClient.del(key);
     } catch (error) {
-        console.error("Error clearing user email history:", error);
+        return;
     }
 };

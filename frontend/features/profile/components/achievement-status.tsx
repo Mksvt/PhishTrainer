@@ -15,19 +15,19 @@ export const AchievementStatus = ({ accuracy }: AchievementStatusProps) => {
     const isBeginner = accuracy < ACCURACY_LEVELS.GOOD;
 
     return (
-        <Card className="p-4 sm:p-8 backdrop-blur-sm bg-linear-to-r from-secondary/10 to-primary/10 border border-secondary/20">
-            <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 text-foreground">
+        <div>
+            <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 text-white">
                 Поточна позиція
             </h2>
 
             {isExpert && (
                 <div className="flex items-start gap-3">
-                    <Trophy className="w-5 h-5 text-accent mt-1 shrink-0" />
+                    <Trophy className="w-5 h-5 text-green-400 mt-1 shrink-0" />
                     <div className="min-w-0">
-                        <p className="font-bold text-sm sm:text-base text-foreground">
+                        <p className="font-bold text-sm sm:text-base text-white">
                             Експерт з безпеки!
                         </p>
-                        <p className="text-xs sm:text-sm text-muted-foreground">
+                        <p className="text-xs sm:text-sm text-gray-300">
                             Ви досягли 80%+ точності. Продовжуйте тренування для
                             утримання навичок.
                         </p>
@@ -37,12 +37,12 @@ export const AchievementStatus = ({ accuracy }: AchievementStatusProps) => {
 
             {isGood && (
                 <div className="flex items-start gap-3">
-                    <TrendingUp className="w-5 h-5 text-primary mt-1 shrink-0" />
+                    <TrendingUp className="w-5 h-5 text-blue-400 mt-1 shrink-0" />
                     <div className="min-w-0">
-                        <p className="font-bold text-sm sm:text-base text-foreground">
+                        <p className="font-bold text-sm sm:text-base text-white">
                             Добрий прогрес!
                         </p>
-                        <p className="text-xs sm:text-sm text-muted-foreground">
+                        <p className="text-xs sm:text-sm text-gray-300">
                             Ви на правильному шляху. Ще{" "}
                             {ACCURACY_LEVELS.EXPERT - accuracy}% до статусу
                             експерта. Продовжуйте!
@@ -53,12 +53,12 @@ export const AchievementStatus = ({ accuracy }: AchievementStatusProps) => {
 
             {isBeginner && (
                 <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-destructive mt-1 shrink-0" />
+                    <AlertCircle className="w-5 h-5 text-red-400 mt-1 shrink-0" />
                     <div className="min-w-0">
-                        <p className="font-bold text-sm sm:text-base text-foreground">
+                        <p className="font-bold text-sm sm:text-base text-white">
                             Потрібна практика
                         </p>
-                        <p className="text-xs sm:text-sm text-muted-foreground">
+                        <p className="text-xs sm:text-sm text-gray-300">
                             Здається, фішинги вас часто обманюють. Проведіть
                             більше симуляцій для покращення навичок
                             розпізнавання.
@@ -66,6 +66,6 @@ export const AchievementStatus = ({ accuracy }: AchievementStatusProps) => {
                     </div>
                 </div>
             )}
-        </Card>
+        </div>
     );
 };

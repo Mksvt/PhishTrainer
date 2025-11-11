@@ -28,11 +28,11 @@ export const AccuracyChart = ({
     ];
 
     return (
-        <Card className="p-3 sm:p-6 backdrop-blur-sm bg-card/50 border-border/50 overflow-hidden">
-            <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 text-foreground truncate">
+        <div className="h-full flex flex-col">
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-3 sm:mb-4 text-white truncate">
                 Розподіл результатів
             </h2>
-            <div className="w-full flex justify-center items-center">
+            <div className="w-full flex justify-center items-center flex-1">
                 <ResponsiveContainer width="100%" height={320}>
                     <PieChart>
                         <Pie
@@ -67,11 +67,17 @@ export const AccuracyChart = ({
                         </Pie>
                         <Tooltip
                             contentStyle={{
-                                backgroundColor: "var(--color-card)",
-                                border: "1px solid var(--color-border)",
+                                backgroundColor: "rgba(15, 23, 42, 0.95)",
+                                border: "1px solid rgba(255,255,255,0.1)",
                                 borderRadius: "8px",
-                                color: "var(--color-foreground)",
+                                color: "white",
                                 fontSize: "12px",
+                            }}
+                            itemStyle={{
+                                color: "white",
+                            }}
+                            labelStyle={{
+                                color: "white",
                             }}
                             formatter={(value: number) => value.toString()}
                             labelFormatter={(label: string) => {
@@ -92,23 +98,23 @@ export const AccuracyChart = ({
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: CHART_COLORS.correct }}
                     ></div>
-                    <span className="text-muted-foreground">Правильно</span>
+                    <span className="text-gray-300">Правильно</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: CHART_COLORS.incorrect }}
                     ></div>
-                    <span className="text-muted-foreground">Неправильно</span>
+                    <span className="text-gray-300">Неправильно</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: CHART_COLORS.clicked }}
                     ></div>
-                    <span className="text-muted-foreground">Попалися</span>
+                    <span className="text-gray-300">Попалися</span>
                 </div>
             </div>
-        </Card>
+        </div>
     );
 };

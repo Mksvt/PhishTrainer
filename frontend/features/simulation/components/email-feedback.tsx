@@ -13,24 +13,24 @@ interface EmailFeedbackProps {
 export const EmailFeedback = ({ feedback, onNext }: EmailFeedbackProps) => {
     return (
         <Card
-            className={`p-8 backdrop-blur-sm bg-card/50 border-border/50 mb-8 border-l-4 ${
+            className={`p-6 sm:p-8 backdrop-blur-md bg-white/5 border mb-6 sm:mb-8 border-l-4 ${
                 feedback.isCorrect
-                    ? "border-l-accent bg-accent/5"
-                    : "border-l-destructive bg-destructive/5"
+                    ? "border-l-green-400 border-white/10 bg-green-500/5"
+                    : "border-l-red-400 border-white/10 bg-red-500/5"
             }`}
         >
             <div className="flex items-start gap-3 mb-4">
                 {feedback.isCorrect ? (
                     <>
-                        <CheckCircle className="w-8 h-8 text-accent" />
-                        <h3 className="text-2xl font-bold text-accent">
+                        <CheckCircle className="w-8 h-8 text-green-400" />
+                        <h3 className="text-2xl font-bold text-green-400">
                             Правильно!
                         </h3>
                     </>
                 ) : (
                     <>
-                        <XCircle className="w-8 h-8 text-destructive" />
-                        <h3 className="text-2xl font-bold text-destructive">
+                        <XCircle className="w-8 h-8 text-red-400" />
+                        <h3 className="text-2xl font-bold text-red-400">
                             Неправильно
                         </h3>
                     </>
@@ -38,23 +38,23 @@ export const EmailFeedback = ({ feedback, onNext }: EmailFeedbackProps) => {
             </div>
 
             <div className="mb-4">
-                <p className="text-lg text-foreground font-medium">
+                <p className="text-lg text-white font-medium">
                     {feedback.message}
                 </p>
             </div>
 
             <div className="mb-6">
-                <h4 className="font-bold text-foreground mb-2">
+                <h4 className="font-bold text-white mb-2">
                     Пояснення (Explainable AI):
                 </h4>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-gray-300 leading-relaxed">
                     {feedback.explanation}
                 </p>
             </div>
 
-            <div className="mb-6 p-4 bg-secondary/10 border border-secondary/30 rounded-lg">
-                <h4 className="font-bold text-foreground mb-2 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-secondary" />
+            <div className="mb-6 p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
+                <h4 className="font-bold text-white mb-2 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-cyan-400" />
                     Ознаки {feedback.correctAnswer ? "фішингу" : "легітимності"}
                     :
                 </h4>
@@ -62,9 +62,9 @@ export const EmailFeedback = ({ feedback, onNext }: EmailFeedbackProps) => {
                     {feedback.indicators.map((indicator, index) => (
                         <li
                             key={index}
-                            className="text-sm text-muted-foreground flex gap-2"
+                            className="text-sm text-gray-300 flex gap-2"
                         >
-                            <span className="text-secondary">•</span>
+                            <span className="text-cyan-400">•</span>
                             {indicator}
                         </li>
                     ))}
@@ -73,7 +73,7 @@ export const EmailFeedback = ({ feedback, onNext }: EmailFeedbackProps) => {
 
             <Button
                 onClick={onNext}
-                className="w-full bg-primary hover:bg-primary/90 h-11 gap-2"
+                className="w-full bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white border-0 shadow-lg shadow-blue-500/50 h-11 gap-2"
             >
                 Наступний лист
                 <ArrowRight className="w-4 h-4" />

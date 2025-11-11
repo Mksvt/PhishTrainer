@@ -4,13 +4,12 @@ import {
     getUserStats,
     getUserAnswerHistory,
     getWeeklyProgress,
-    checkAnswerValidation,
 } from "../controllers/simulation.controller";
+import { checkAnswerValidation } from "../validators/simulation.validator";
 import { authMiddleware } from "../middleware/auth.middleware";
 
 const router = Router();
 
-// Всі маршрути захищені
 router.post("/check", authMiddleware, checkAnswerValidation, checkAnswer);
 router.get("/stats", authMiddleware, getUserStats);
 router.get("/history", authMiddleware, getUserAnswerHistory);

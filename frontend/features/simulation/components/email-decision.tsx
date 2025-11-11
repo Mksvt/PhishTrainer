@@ -17,7 +17,7 @@ export const EmailDecision = ({
             <Button
                 onClick={() => onAnswer(true)}
                 disabled={isDisabled}
-                className="h-14 sm:h-16 text-base sm:text-lg bg-destructive hover:bg-destructive/90 gap-2"
+                className="h-14 sm:h-16 text-base sm:text-lg bg-linear-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white border-0 shadow-lg shadow-red-500/50 gap-2"
             >
                 <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" />
                 Це фішинг!
@@ -27,7 +27,7 @@ export const EmailDecision = ({
                 onClick={() => onAnswer(false)}
                 disabled={isDisabled}
                 variant="outline"
-                className="h-14 sm:h-16 text-base sm:text-lg gap-2 border-accent text-accent hover:bg-accent/10 hover:text-accent"
+                className="h-14 sm:h-16 text-base sm:text-lg gap-2 border-white/20 bg-white/5 hover:bg-green-500/20 text-white hover:border-green-500/30"
             >
                 <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                 Це легітимно

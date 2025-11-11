@@ -7,14 +7,13 @@ import authRoutes from "./routes/auth.routes";
 import emailRoutes from "./routes/email.routes";
 import simulationRoutes from "./routes/simulation.routes";
 import { connectRedis, disconnectRedis } from "./config/redis";
+import { errorHandler, notFoundHandler } from "./middleware/error.middleware";
 
-// Завантаження змінних середовища
 dotenv.config();
 
 const app: Application = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
 app.use(
     cors({
         origin: process.env.CORS_ORIGIN || "http://localhost:3000",
@@ -24,9 +23,11 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(morgan("dev"));
 
-// Routes
+if (process.env.NODE_ENV === "development") {
+    app.use(morgan("dev"));
+}
+
 app.get("/", (req: Request, res: Response) => {
     res.json({
         message: "PhishTrainer API Server",
@@ -47,48 +48,36 @@ app.use("/api/auth", authRoutes);
 app.use("/api/emails", emailRoutes);
 app.use("/api/simulation", simulationRoutes);
 
-// 404 Handler
-app.use((req: Request, res: Response) => {
-    res.status(404).json({ error: "Маршрут не знайдено" });
-});
+app.use(notFoundHandler);
+app.use(errorHandler);
 
-// Error Handler
-app.use((err: any, req: Request, res: Response, next: any) => {
-    console.error("Помилка сервера:", err);
-    res.status(500).json({
-        error: "Внутрішня помилка сервера",
-        message:
-            process.env.NODE_ENV === "development" ? err.message : undefined,
-    });
-});
-
-// Start server
 const server = app.listen(PORT, async () => {
-    console.log(`[SERVER] Сервер запущено на порту ${PORT}`);
-    console.log(`[API] Доступний за адресою: http://localhost:${PORT}/api`);
-    console.log(`[ENV] Середовище: ${process.env.NODE_ENV || "development"}`);
+    if (process.env.NODE_ENV === "development") {
+        console.log(`[SERVER] Сервер запущено на порту ${PORT}`);
+        console.log(`[API] Доступний за адресою: http://localhost:${PORT}/api`);
+        console.log(
+            `[ENV] Середовище: ${process.env.NODE_ENV || "development"}`
+        );
+    }
 
-    // Підключення до Redis
     await connectRedis();
 });
 
-// Graceful shutdown
-process.on("SIGTERM", async () => {
-    console.log("[SERVER] SIGTERM отримано, вимикаємо сервер...");
-    server.close(async () => {
-        console.log("[SERVER] HTTP сервер вимкнено");
-        await disconnectRedis();
-        process.exit(0);
-    });
-});
+const gracefulShutdown = async (signal: string) => {
+    if (process.env.NODE_ENV === "development") {
+        console.log(`[SERVER] ${signal} отримано, вимикаємо сервер...`);
+    }
 
-process.on("SIGINT", async () => {
-    console.log("[SERVER] SIGINT отримано, вимикаємо сервер...");
     server.close(async () => {
-        console.log("[SERVER] HTTP сервер вимкнено");
+        if (process.env.NODE_ENV === "development") {
+            console.log("[SERVER] HTTP сервер вимкнено");
+        }
         await disconnectRedis();
         process.exit(0);
     });
-});
+};
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 
 export default app;

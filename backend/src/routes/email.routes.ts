@@ -12,7 +12,6 @@ import { authMiddleware } from "../middleware/auth.middleware";
 
 const router = Router();
 
-// Всі маршрути захищені
 router.get("/", authMiddleware, getAllEmails);
 router.get("/random", authMiddleware, getRandomEmail);
 router.get("/category/:category", authMiddleware, getEmailByCategory);

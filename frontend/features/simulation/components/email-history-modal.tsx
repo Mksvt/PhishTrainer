@@ -17,12 +17,14 @@ export const EmailHistoryModal = ({
     onClose,
 }: EmailHistoryModalProps) => {
     return (
-        <Card className="p-6 mb-6 backdrop-blur-sm bg-card/50 border-border/50">
+        <Card className="p-6 mb-6 backdrop-blur-md bg-white/5 border border-white/10">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-bold">Історія показаних листів</h2>
+                <h2 className="text-lg font-bold text-white">
+                    Історія показаних листів
+                </h2>
                 <button
                     onClick={onClose}
-                    className="text-2xl hover:text-destructive transition-colors"
+                    className="text-2xl text-gray-400 hover:text-red-400 transition-colors"
                 >
                     ×
                 </button>
@@ -40,15 +42,15 @@ export const EmailHistoryModal = ({
                         {emails.map((email, index) => (
                             <div
                                 key={email.id}
-                                className="p-3 border border-border rounded-lg hover:bg-secondary/10 transition"
+                                className="p-3 border border-white/10 rounded-lg hover:bg-white/5 transition"
                             >
-                                <p className="text-sm font-medium">
+                                <p className="text-sm font-medium text-white">
                                     {index + 1}. {email.subject}
                                 </p>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-gray-400">
                                     {email.from}
                                 </p>
-                                <span className="inline-block mt-2 px-2 py-1 text-xs bg-secondary/20 text-secondary rounded">
+                                <span className="inline-block mt-2 px-2 py-1 text-xs bg-purple-500/20 text-purple-300 rounded border border-purple-500/30">
                                     {capitalize(email.category)} -{" "}
                                     {capitalize(email.difficulty)}
                                 </span>
@@ -56,9 +58,7 @@ export const EmailHistoryModal = ({
                         ))}
                     </div>
                 ) : (
-                    <p className="text-muted-foreground text-sm">
-                        Історія пуста
-                    </p>
+                    <p className="text-gray-400 text-sm">Історія пуста</p>
                 )}
             </div>
         </Card>

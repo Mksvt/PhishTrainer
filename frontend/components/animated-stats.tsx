@@ -19,7 +19,9 @@ export function AnimatedStats({
 
     // Перевірка чи потрібна анімація
     const shouldAnimate = /^\d+[+%]?$/.test(value); // Тільки для чисел з + або %
-    const targetValue = shouldAnimate ? parseInt(value.replace(/\D/g, "")) || 0 : 0;
+    const targetValue = shouldAnimate
+        ? parseInt(value.replace(/\D/g, "")) || 0
+        : 0;
     const suffix = shouldAnimate ? value.replace(/\d/g, "") : "";
 
     useEffect(() => {
