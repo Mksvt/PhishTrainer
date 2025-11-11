@@ -20,7 +20,7 @@ git clone https://github.com/Mksvt/PhishTrainer.git
 cd PhishTrainer
 ```
 
-*Якщо Git не встановлено - завантажте ZIP з GitHub та розпакуйте*
+_Якщо Git не встановлено - завантажте ZIP з GitHub та розпакуйте_
 
 ### Крок 3: Налаштуйте Backend (1 хвилина)
 
@@ -53,6 +53,7 @@ docker exec -it phishtrainer-backend npm run prisma:migrate:deploy
 ### Крок 5: Відкрийте додаток! 🎉
 
 **Перейдіть у браузері:**
+
 ```
 http://localhost:3000
 ```
@@ -62,21 +63,25 @@ http://localhost:3000
 ## 🚀 Основні команди
 
 ### Запуск проекту:
+
 ```powershell
 docker-compose up -d
 ```
 
 ### Зупинка проекту:
+
 ```powershell
 docker-compose down
 ```
 
 ### Перегляд логів (якщо проблеми):
+
 ```powershell
 docker-compose logs
 ```
 
 ### Повний перезапуск:
+
 ```powershell
 docker-compose down -v
 docker-compose up -d --build
@@ -97,16 +102,19 @@ docker-compose up -d --build
 ## 🆘 Проблеми?
 
 ### Порт зайнятий:
+
 ```powershell
 netstat -ano | findstr :3000
 taskkill /PID <номер> /F
 ```
 
 ### Docker не працює:
-- Перезапустіть Docker Desktop
-- Перезавантажте комп'ютер
+
+-   Перезапустіть Docker Desktop
+-   Перезавантажте комп'ютер
 
 ### Не працює база даних:
+
 ```powershell
 docker-compose restart postgres
 docker exec -it phishtrainer-backend npm run prisma:migrate:deploy
@@ -118,11 +126,11 @@ docker exec -it phishtrainer-backend npm run prisma:migrate:deploy
 
 **Повний посібник:** [USER_GUIDE_UA.md](./USER_GUIDE_UA.md)
 
-- Детальне встановлення Docker
-- Опис всіх функцій
-- Вирішення проблем
-- API документація
-- Поради для навчання
+-   Детальне встановлення Docker
+-   Опис всіх функцій
+-   Вирішення проблем
+-   API документація
+-   Поради для навчання
 
 ---
 
