@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends dumb-init opens
 COPY package*.json ./
 
 # Install production dependencies only
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist

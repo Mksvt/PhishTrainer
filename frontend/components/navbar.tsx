@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Shield, LogOut, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { useAuth } from "@/features/auth/hooks";
 
 export function Navbar() {
@@ -12,8 +13,14 @@ export function Navbar() {
         <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                        <Shield className="w-6 h-6 text-primary-foreground" />
+                    <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center p-1.5">
+                        <Image 
+                            src="/logo.svg" 
+                            alt="PhishTrainer Logo" 
+                            width={24} 
+                            height={24}
+                            className="w-full h-full"
+                        />
                     </div>
                     <span className="font-bold text-foreground hidden sm:inline">
                         PhishTrainer
